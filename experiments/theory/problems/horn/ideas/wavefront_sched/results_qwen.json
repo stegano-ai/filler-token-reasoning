@@ -1,0 +1,101 @@
+{
+ "problem": "horn",
+ "circuit": "wavefront_sched",
+ "arch": "qwen",
+ "arch_params": {
+  "p": 8,
+  "H": 16,
+  "F": 16,
+  "M": 4,
+  "C": 4,
+  "c_beta": 2.0,
+  "scratch_exp": 1.0,
+  "alpha_exp": 2.0,
+  "const_alphabet": 1024,
+  "mlp_bits": 32,
+  "max_depth": 200,
+  "layers": 40,
+  "pattern": [
+   "linear",
+   "linear",
+   "linear",
+   "full"
+  ],
+  "window": 128,
+  "lin_keys": 128,
+  "conv": 3
+ },
+ "layers": {
+  "16": 40,
+  "24": 48,
+  "32": 56,
+  "48": 72,
+  "64": 88
+ },
+ "claimed_layers": {
+  "16": 40,
+  "24": 48,
+  "32": 56,
+  "48": 72,
+  "64": 88
+ },
+ "depth_ok": true,
+ "quick": [
+  {
+   "n": 16,
+   "depth": 40,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 24,
+   "depth": 48,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 32,
+   "depth": 56,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 48,
+   "depth": 72,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 64,
+   "depth": 88,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  }
+ ],
+ "quick_ok": true,
+ "verified_n": [
+  16,
+  24,
+  32,
+  48,
+  64
+ ],
+ "final": {
+  "seconds": 307.1,
+  "tested_per_n": {
+   "16": 4,
+   "24": 4,
+   "32": 4,
+   "48": 3,
+   "64": 3
+  },
+  "n_failures": 0,
+  "failures": []
+ },
+ "pass": true
+}

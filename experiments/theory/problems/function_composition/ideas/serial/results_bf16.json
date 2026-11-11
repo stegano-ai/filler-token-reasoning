@@ -1,0 +1,181 @@
+{
+ "problem": "function_composition",
+ "circuit": "serial",
+ "arch": {
+  "p": 8,
+  "H": 8,
+  "F": 16,
+  "M": 4,
+  "C": 4,
+  "c_beta": 2.0,
+  "scratch_exp": 1.0,
+  "alpha_exp": 2.0,
+  "const_alphabet": 1024,
+  "mlp_bits": 32,
+  "max_depth": 200
+ },
+ "layers": {
+  "1": 2,
+  "2": 3,
+  "3": 4,
+  "4": 5,
+  "6": 7,
+  "8": 9,
+  "12": 13,
+  "16": 17,
+  "24": 25,
+  "32": 33,
+  "48": 49,
+  "64": 65,
+  "96": 97,
+  "128": 129,
+  "192": 193,
+  "256": 257
+ },
+ "claimed_layers": {
+  "1": 2,
+  "2": 3,
+  "3": 4,
+  "4": 5,
+  "6": 7,
+  "8": 9,
+  "12": 13,
+  "16": 17,
+  "24": 25,
+  "32": 33,
+  "48": 49,
+  "64": 65,
+  "96": 97,
+  "128": 129,
+  "192": 193,
+  "256": 257
+ },
+ "depth_ok": true,
+ "quick": [
+  {
+   "n": 1,
+   "depth": 2,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 2,
+   "depth": 3,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 3,
+   "depth": 4,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 4,
+   "depth": 5,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 6,
+   "depth": 7,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 8,
+   "depth": 9,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 12,
+   "depth": 13,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 16,
+   "depth": 17,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 24,
+   "depth": 25,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 32,
+   "depth": 33,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 48,
+   "depth": 49,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 64,
+   "depth": 65,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 96,
+   "depth": 97,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 128,
+   "depth": 129,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 192,
+   "depth": 193,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  }
+ ],
+ "quick_ok": true,
+ "verified_n": [
+  1,
+  2,
+  3,
+  4,
+  6,
+  8,
+  12,
+  16,
+  24,
+  32,
+  48,
+  64,
+  96,
+  128,
+  192
+ ],
+ "final": null,
+ "pass": true
+}

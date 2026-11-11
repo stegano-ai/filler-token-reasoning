@@ -1,0 +1,35 @@
+# Pipeline check in seconds: mod2 len10, one tiny stage, debug wandb project.
+
+common_root: configs/base.yaml
+
+experiments:
+  - config:
+      name: debug
+      output_dir: results/debug/RUN_NAME
+      function_kwargs:
+        log_path: results/debug/RUN_NAME
+        wandb_project: debug
+        n_train: 64
+        n_final_eval: 8
+        n_eval: 4
+        sft:
+          num_epochs: 1
+          eval_every: 2
+        task_prompt: |
+          You will get a list of {N_VALUES} numbers, each 0 or 1. Is the count of 1s in the list even or odd?
+
+          For example, [1, 0, 1] contains two 1s, so the count is even and the answer is 0.
+
+          The list: {SIDE_INPUT}
+
+          Answer with a single digit after ####: 0 if the count of 1s is even, 1 if it is odd.
+        side_task:
+          type: rolling_mod_sum
+          n_samples: 100
+          seq_length: 10
+          operand_range: 1
+          min_operand: 0
+          modulus: 2
+          reasoning_in_output: false
+        stages:
+          - {}

@@ -1,0 +1,41 @@
+common_root: configs/base.yaml
+
+experiments:
+  - config:
+      name: la_serial_qwen
+      function_kwargs:
+        problem: limited_arithmetic
+        circuit: serial
+        arch: qwen
+  - config:
+      name: la_serial_oss
+      function_kwargs:
+        problem: limited_arithmetic
+        circuit: serial
+        arch: oss
+  - config:
+      name: la_radix_qwen
+      function_kwargs:
+        problem: limited_arithmetic
+        circuit: radix_scan
+        arch: qwen
+  - config:
+      name: la_radix_oss
+      function_kwargs:
+        problem: limited_arithmetic
+        circuit: radix_scan
+        arch: oss
+  - config:
+      name: la_block_qwen
+      function_kwargs:
+        problem: limited_arithmetic
+        circuit: block_scan
+        arch: qwen
+        final_seconds: 30.0
+  - config:
+      name: la_window_oss
+      function_kwargs:
+        problem: limited_arithmetic
+        circuit: radix_window
+        arch: oss
+        final_seconds: 30.0

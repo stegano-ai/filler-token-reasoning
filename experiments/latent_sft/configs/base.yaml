@@ -1,0 +1,44 @@
+# Latent SFT shared root. The assistant turn is prefilled dots; teacher-forcing targets at
+# dot position i are the token of running state i, plus the ordinary `#### <answer>`
+# supervision. Nothing is sampled: eval is logit-based (argmax over the alphabet at each
+# probed position).
+#
+# Eval scheme: n_eval (small, every sft.eval_every steps) drives the 0.9 early-stop gate;
+# n_final_eval (large, once against the returned checkpoint) produces eval_final/* and the
+# per-position gold-state prob curve (eval/state_gold_prob_final in wandb).
+#
+# Run names carry no timestamp, so a run's results folder is determined by its config
+# alone. A finished run (all stages passed, or a stage walled) writes a `.complete`
+# marker and is SKIPPED on re-launch — so re-running a sweep only runs the cells that
+# are missing. Delete a run's folder to force it to re-run.
+#
+# This root is not launched directly — the mode metas (curriculum.yaml, direct.yaml,
+# open.yaml, comparison.yaml) compose it with the task x model axes in tasks.yaml.
+
+name: latent
+function_name: train_curriculum
+time_stamp_name: false
+
+wandb_project: null  # train_curriculum owns the one wandb run
+
+function_kwargs:
+  model_name: "Qwen/Qwen3.6-35B-A3B"
+  renderer_name: qwen3_5_disable_thinking
+  sft:
+    learning_rate: 1.6e-4
+    lr_schedule: constant
+    lora_rank: 32
+    num_epochs: 17
+    eval_every: 100
+    save_every: 100
+    load_checkpoint_path: null
+  n_train: 2000
+  n_final_eval: 200
+  n_eval: 20
+  batch_size: 16
+  seed: 0
+  early_stop_metric: eval/output_correct
+  early_stop_threshold: 0.9
+  early_stop_min_steps: 50
+  wandb_project: filler-token-reasoning
+  wandb_name: RUN_NAME

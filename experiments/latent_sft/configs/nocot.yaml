@@ -1,0 +1,22 @@
+# No-CoT floor: SFT on question -> answer with NO filler positions at all
+# (`use_filler: false` drops the dots, so loss sits only on the `#### <answer>` token
+# and the model has no extra forward positions to compute in).
+#
+# Run as a CURRICULUM rather than straight at the target: the ladder stops at the first
+# rung the model cannot pass, and since this arm is expected to wall early the walling
+# rung is short and cheap ($218 measured, vs $406 training straight at target).
+#
+# Its final checkpoint is also evaluated once at the task target (eval_final) so the
+# analysis plot can put all three bars at the same size.
+
+base: configs/tasks.yaml
+
+parallel: true
+max_concurrent: 5
+
+common_patch:
+  - name: nocot
+    output_dir: results/nocot/RUN_NAME
+    function_kwargs:
+      log_path: results/nocot/RUN_NAME
+      use_filler: false

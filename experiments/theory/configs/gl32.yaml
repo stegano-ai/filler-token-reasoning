@@ -1,0 +1,55 @@
+common_root: configs/base.yaml
+
+experiments:
+  - config:
+      name: gl32_serial_qwen
+      function_kwargs:
+        problem: gl32
+        circuit: serial
+        arch: qwen
+  - config:
+      name: gl32_serial_oss
+      function_kwargs:
+        problem: gl32
+        circuit: serial
+        arch: oss
+  - config:
+      name: gl32_table_fold_qwen
+      function_kwargs:
+        problem: gl32
+        circuit: table_fold
+        arch: qwen
+  - config:
+      name: gl32_table_fold_oss
+      function_kwargs:
+        problem: gl32
+        circuit: table_fold
+        arch: oss
+  - config:
+      name: gl32_block_scan_qwen
+      function_kwargs:
+        problem: gl32
+        circuit: block_scan
+        arch: qwen
+        final_seconds: 45.0
+  - config:
+      name: gl32_block_scan_bf16
+      function_kwargs:
+        problem: gl32
+        circuit: block_scan
+        arch: bf16
+        final_seconds: 45.0
+  - config:
+      name: gl32_hs_scan_oss
+      function_kwargs:
+        problem: gl32
+        circuit: hs_scan
+        arch: oss
+        final_seconds: 45.0
+  - config:
+      name: gl32_hs_scan_bf16
+      function_kwargs:
+        problem: gl32
+        circuit: hs_scan
+        arch: bf16
+        final_seconds: 45.0

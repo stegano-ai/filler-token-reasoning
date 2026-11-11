@@ -1,0 +1,14 @@
+# Shallowest verified circuit per length, per task and per model preset, over every ideas/*/results_<arch>.json
+# that check_circuit wrote. Writes <out_dir>/<name>.json and .png (out_dir '.' = experiments/theory).
+
+name: frontier
+function_name: frontier
+time_stamp_name: false
+
+wandb_project: null
+
+function_kwargs:
+  name: frontier
+  out_dir: .
+  archs: [qwen, oss]
+  tasks: [rolling_mod_sum, limited_arithmetic, gl32, ball_and_cups_a5, function_composition, prontoqa_chain, horn]

@@ -1,0 +1,229 @@
+{
+ "problem": "function_composition",
+ "circuit": "prefix_doubling",
+ "arch": {
+  "p": 8,
+  "H": 8,
+  "F": 16,
+  "M": 4,
+  "C": 4,
+  "c_beta": 2.0,
+  "scratch_exp": 1.0,
+  "alpha_exp": 2.0,
+  "const_alphabet": 1024,
+  "mlp_bits": 32,
+  "max_depth": 200
+ },
+ "layers": {
+  "1": 2,
+  "2": 3,
+  "3": 4,
+  "4": 4,
+  "6": 5,
+  "8": 5,
+  "12": 6,
+  "16": 6,
+  "24": 7,
+  "32": 7,
+  "48": 8,
+  "64": 8,
+  "96": 9,
+  "128": 9,
+  "192": 10,
+  "256": 10,
+  "384": 11,
+  "512": 11,
+  "768": 12,
+  "1024": 12
+ },
+ "claimed_layers": {
+  "1": 2,
+  "2": 3,
+  "3": 4,
+  "4": 4,
+  "6": 5,
+  "8": 5,
+  "12": 6,
+  "16": 6,
+  "24": 7,
+  "32": 7,
+  "48": 8,
+  "64": 8,
+  "96": 9,
+  "128": 9,
+  "192": 10,
+  "256": 10,
+  "384": 11,
+  "512": 11,
+  "768": 12,
+  "1024": 12
+ },
+ "depth_ok": true,
+ "quick": [
+  {
+   "n": 1,
+   "depth": 2,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 2,
+   "depth": 3,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 3,
+   "depth": 4,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 4,
+   "depth": 4,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 6,
+   "depth": 5,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 8,
+   "depth": 5,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 12,
+   "depth": 6,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 16,
+   "depth": 6,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 24,
+   "depth": 7,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 32,
+   "depth": 7,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 48,
+   "depth": 8,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 64,
+   "depth": 8,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 96,
+   "depth": 9,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 128,
+   "depth": 9,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 192,
+   "depth": 10,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 256,
+   "depth": 10,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 384,
+   "depth": 11,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 512,
+   "depth": 11,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 768,
+   "depth": 12,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 1024,
+   "depth": 12,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  }
+ ],
+ "quick_ok": true,
+ "verified_n": [
+  1,
+  2,
+  3,
+  4,
+  6,
+  8,
+  12,
+  16,
+  24,
+  32,
+  48,
+  64,
+  96,
+  128,
+  192,
+  256,
+  384,
+  512,
+  768,
+  1024
+ ],
+ "final": null,
+ "pass": true
+}

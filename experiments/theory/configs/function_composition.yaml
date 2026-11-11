@@ -1,0 +1,38 @@
+common_root: configs/base.yaml
+
+experiments:
+  - config:
+      name: fc_serial_qwen
+      function_kwargs:
+        circuit: serial
+        arch: qwen
+  - config:
+      name: fc_serial_oss
+      function_kwargs:
+        circuit: serial
+        arch: oss
+  - config:
+      name: fc_prefix_qwen
+      function_kwargs:
+        circuit: prefix_doubling
+        arch: qwen
+  - config:
+      name: fc_prefix_oss
+      function_kwargs:
+        circuit: prefix_doubling
+        arch: oss
+  - config:
+      name: fc_hs_radix4_bf16
+      function_kwargs:
+        circuit: hs_radix4
+        arch: bf16
+  - config:
+      name: fc_hs_radix4_oss
+      function_kwargs:
+        circuit: hs_radix4
+        arch: oss
+  - config:
+      name: fc_block_radix4_qwen
+      function_kwargs:
+        circuit: block_radix4
+        arch: qwen

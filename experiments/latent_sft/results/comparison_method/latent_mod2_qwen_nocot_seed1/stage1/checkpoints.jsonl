@@ -1,0 +1,1 @@
+{"name": "early_stop_1", "batch": 1, "state_path": "tinker://5c15cfb0-6e41-5804-a19c-4f28457cab79:train:0/weights/early_stop_1", "sampler_path": "tinker://5c15cfb0-6e41-5804-a19c-4f28457cab79:train:0/sampler_weights/early_stop_1"}

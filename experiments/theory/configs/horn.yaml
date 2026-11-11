@@ -1,0 +1,73 @@
+common_root: configs/base.yaml
+
+# horn: the generator needs hops >= 16; checkpoints stop at 64 because a hops-64 instance takes
+# minutes to simulate (n_pos ~ 140 * hops).
+# wavefront is the ideal-model construction (all layers full attention); wavefront_sched is the
+# same algorithm scheduled onto the model presets — linear layers carry the derivation steps under
+# qwen (gated establishment memory), full layers carry them under oss. wavefront_lean is
+# wavefront_sched with the additive overhead cut: a one-layer emit everywhere and, under qwen, an
+# 8-layer init (t + 12 instead of t + 24).
+experiments:
+  - config:
+      name: horn_wavefront_bf16
+      function_kwargs:
+        problem: horn
+        circuit: wavefront
+        min_n: 16
+        max_n: 64
+        final_seconds: 300.0
+        arch: bf16
+  - config:
+      name: horn_wavefront_sched_bf16
+      function_kwargs:
+        problem: horn
+        circuit: wavefront_sched
+        min_n: 16
+        max_n: 64
+        final_seconds: 300.0
+        arch: bf16
+  - config:
+      name: horn_wavefront_sched_qwen
+      function_kwargs:
+        problem: horn
+        circuit: wavefront_sched
+        min_n: 16
+        max_n: 64
+        final_seconds: 300.0
+        arch: qwen
+  - config:
+      name: horn_wavefront_sched_oss
+      function_kwargs:
+        problem: horn
+        circuit: wavefront_sched
+        min_n: 16
+        max_n: 64
+        final_seconds: 300.0
+        arch: oss
+  - config:
+      name: horn_wavefront_lean_bf16
+      function_kwargs:
+        problem: horn
+        circuit: wavefront_lean
+        min_n: 16
+        max_n: 64
+        final_seconds: 300.0
+        arch: bf16
+  - config:
+      name: horn_wavefront_lean_qwen
+      function_kwargs:
+        problem: horn
+        circuit: wavefront_lean
+        min_n: 16
+        max_n: 64
+        final_seconds: 300.0
+        arch: qwen
+  - config:
+      name: horn_wavefront_lean_oss
+      function_kwargs:
+        problem: horn
+        circuit: wavefront_lean
+        min_n: 16
+        max_n: 64
+        final_seconds: 300.0
+        arch: oss

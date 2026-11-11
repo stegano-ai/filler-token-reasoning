@@ -1,0 +1,23 @@
+# Circuit checker: runs a submitted RS-transformer circuit (problems/<problem>/ideas/<circuit>/circuit.py)
+# against the problem's instance generator (problems/<problem>/problem.py), records its depth
+# at the length checkpoints in [min_n, max_n] (stopping once depth exceeds max_layers), spot-checks
+# correctness at every checkpoint it can run (stopping at the first failing length), and writes results_<arch>.json next to it; arch selects the model preset (bf16 | qwen | oss). final_seconds > 0 adds the
+# time-budgeted robustness pass (fresh instances at every runnable checkpoint, cycling
+# p / p-1 / c_beta 1.5) that a construction must survive before it counts.
+
+name: check
+function_name: check_circuit
+time_stamp_name: false
+
+wandb_project: null
+
+function_kwargs:
+  problem: function_composition
+  circuit: serial
+  arch: qwen
+  min_n: 1
+  max_n: 1024
+  max_layers: 200
+  quick_instances: 5
+  final_seconds: 0
+  seed: 0

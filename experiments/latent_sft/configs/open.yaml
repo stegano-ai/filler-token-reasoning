@@ -1,0 +1,23 @@
+# Open mode: the capability control. Same one-stage-at-target setup as direct, but
+# the reasoning is written as real digit tokens (open_fraction 1.0) instead of dots,
+# and the early-stop gate reads the open eval. Shows the models can do the
+# computation at a size where latent training fails — every open run so far has hit
+# 1.00 at the first gate (step 100), so these cost ~5% of their ceiling.
+#
+# Run it after the latent arms: the point is a per-task open floor at the size the
+# latent run failed on, which is exactly the task target in tasks.yaml.
+
+base: configs/tasks.yaml
+
+parallel: true
+max_concurrent: 3
+
+common_patch:
+  - name: open
+    output_dir: results/open/RUN_NAME
+    function_kwargs:
+      log_path: results/open/RUN_NAME
+      open_fraction: 1.0
+      early_stop_metric: eval_open/output_correct
+      stages:
+        - {}

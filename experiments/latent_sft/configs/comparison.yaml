@@ -1,0 +1,249 @@
+# Method comparison: our per-dot state supervision against the alternatives.
+#
+# ONE config for the whole comparison. Each `experiments:` block is a rectangular
+# task x model x arm x seed grid; there are several blocks because the overall grid is
+# ragged - a5 has one seed and no dotbydot arm, and gl32 is qwen-only (oss20b cannot do
+# gl32 even at length 10) with a 4th seed on its dotbydot arm. Finished runs write
+# `.complete` and are skipped, so re-launching this costs nothing, and adding a task,
+# arm or seed means editing a list here rather than adding a config file.
+#
+# Arms, identical except what the dot positions are trained on:
+#   ours        - per-dot state supervision + ladder                 (the method)
+#   ours_direct - per-dot state supervision, one stage at target     (ablates the ladder)
+#   ansonly     - dots present, NO loss on them; only `#### <answer>`
+#   dotbydot    - "Let's Think Dot by Dot" (2404.15758): 50% open CoT + 50% filler dots
+#                 with loss on the ANSWER ONLY. Their recipe exactly.
+# Every laddered arm shares a ladder, and early stop reads the LATENT eval in all arms,
+# since latent capability is the quantity being compared.
+#
+# Targets are each task's certified size: mod2 40, a5 30, gl32 40.
+# Chance floors: mod2 0.50, a5 0.20, gl32 0.14.
+
+common_root: configs/base.yaml
+
+parallel: true
+max_concurrent: 4
+
+experiments:
+  # mod2 @ 40 - both models, all four arms, three seeds (24 runs)
+  - config_axes:
+      - - name: mod2
+          function_kwargs:
+            task_prompt: |
+              You will get a list of {N_VALUES} numbers, each 0 or 1. Is the count of 1s in the list even or odd?
+
+              For example, [1, 0, 1] contains two 1s, so the count is even and the answer is 0.
+
+              The list: {SIDE_INPUT}
+
+              Answer with a single digit after ####: 0 if the count of 1s is even, 1 if it is odd.
+            side_task:
+              type: rolling_mod_sum
+              n_samples: 4000
+              seq_length: 40
+              operand_range: 1
+              min_operand: 0
+              modulus: 2
+              reasoning_in_output: false
+            stages:
+              - side_task: {seq_length: 10, n_samples: 800}
+                n_eval: 20
+                n_final_eval: 100
+              - side_task: {seq_length: 20}
+              - side_task: {seq_length: 40}
+
+      - - name: qwen
+        - name: oss20b
+          function_kwargs:
+            model_name: "openai/gpt-oss-20b"
+            renderer_name: gpt_oss_no_sysprompt
+            sft:
+              learning_rate: 1.2e-4
+
+      - - name: ours
+        - name: ours_direct
+          function_kwargs:
+            stages:
+              - {}
+        - name: ansonly
+          function_kwargs:
+            state_supervision: false
+        - name: dotbydot
+          function_kwargs:
+            open_fraction: 0.5
+            state_supervision: false
+
+      - - name: seed1
+          function_kwargs:
+            seed: 1
+            side_task:
+              seed: 101
+        - name: seed2
+          function_kwargs:
+            seed: 2
+            side_task:
+              seed: 102
+        - name: seed3
+          function_kwargs:
+            seed: 3
+            side_task:
+              seed: 103
+
+  # a5 @ 30 - both models, three arms, one seed (6 runs). a5 does not separate the arms
+  # (all land 0.66-0.82 at the target), so it was not replicated to further seeds.
+  - config_axes:
+      - - name: a5
+          function_kwargs:
+            task_prompt: |
+              Five cups sit at positions 0-4; a ball starts under the cup at position 0. You will get a list of moves, each 0 or 1. Apply them in order. 0 = Rotate: every cup moves from position p to (p+1) mod 5. 1 = Double-Swap: the cups at positions 0 and 1 swap, and the cups at positions 3 and 4 swap.
+
+              For example, for moves [1, 0]: the Double-Swap moves the ball from position 0 to position 1, then the Rotate moves it from position 1 to position 2, so the answer is 2.
+
+              Moves: {SIDE_INPUT}
+
+              Where is the ball at the end? Answer with a single digit from 0 to {MAX_VALUE} after ####.
+            side_task:
+              type: ball_and_cups
+              n_samples: 4000
+              seq_length: 30
+              reasoning_in_output: false
+            stages:
+              - side_task: {seq_length: 10, n_samples: 800}
+                n_eval: 20
+                n_final_eval: 100
+              - side_task: {seq_length: 15}
+              - side_task: {seq_length: 20}
+              - side_task: {seq_length: 30}
+
+      - - name: qwen
+        - name: oss20b
+          function_kwargs:
+            model_name: "openai/gpt-oss-20b"
+            renderer_name: gpt_oss_no_sysprompt
+            sft:
+              learning_rate: 1.2e-4
+
+      - - name: ours
+        - name: ours_direct
+          function_kwargs:
+            stages:
+              - {}
+        - name: ansonly
+          function_kwargs:
+            state_supervision: false
+
+      - - name: seed1
+          function_kwargs:
+            seed: 1
+            side_task:
+              seed: 101
+
+  # gl32 @ 40 - qwen only, three arms, three seeds (9 runs)
+  - config_axes:
+      - - name: gl32
+          function_kwargs:
+            task_prompt: |
+              Three lamps sit in a ring: lamp A, lamp B, lamp C. Only lamp A is on at the start. You will get a list of moves, each 0 or 1. Apply them in order. 0 = Shift: every lamp passes its on/off state to the next lamp (A's state moves to B, B's to C, C's to A). 1 = Couple: if lamp A is on, lamp B toggles; if lamp A is off, nothing happens.
+
+              Encode a lamp pattern as the number A + 2*B + 4*C, counting an on lamp as 1. For example, for moves [1, 0]: the Couple turns lamp B on (lamp A is on), then the Shift passes each state along the ring, leaving lamps B and C on, so the answer is 6.
+
+              Moves: {SIDE_INPUT}
+
+              What is the final pattern number? Answer with a single digit from 1 to 7 after ####.
+            side_task:
+              type: gl32
+              n_samples: 4000
+              seq_length: 40
+              reasoning_in_output: false
+            stages:
+              - side_task: {seq_length: 10, n_samples: 800}
+                n_eval: 20
+                n_final_eval: 100
+              - side_task: {seq_length: 20}
+              - side_task: {seq_length: 30}
+              - side_task: {seq_length: 40}
+
+      - - name: qwen
+
+      - - name: ours
+        - name: ours_direct
+          function_kwargs:
+            stages:
+              - {}
+        - name: ansonly
+          function_kwargs:
+            state_supervision: false
+
+      - - name: seed1
+          function_kwargs:
+            seed: 1
+            side_task:
+              seed: 101
+        - name: seed2
+          function_kwargs:
+            seed: 2
+            side_task:
+              seed: 102
+        - name: seed3
+          function_kwargs:
+            seed: 3
+            side_task:
+              seed: 103
+
+  # gl32 @ 40 - the dotbydot arm, four seeds (4 runs)
+  - config_axes:
+      - - name: gl32
+          function_kwargs:
+            task_prompt: |
+              Three lamps sit in a ring: lamp A, lamp B, lamp C. Only lamp A is on at the start. You will get a list of moves, each 0 or 1. Apply them in order. 0 = Shift: every lamp passes its on/off state to the next lamp (A's state moves to B, B's to C, C's to A). 1 = Couple: if lamp A is on, lamp B toggles; if lamp A is off, nothing happens.
+
+              Encode a lamp pattern as the number A + 2*B + 4*C, counting an on lamp as 1. For example, for moves [1, 0]: the Couple turns lamp B on (lamp A is on), then the Shift passes each state along the ring, leaving lamps B and C on, so the answer is 6.
+
+              Moves: {SIDE_INPUT}
+
+              What is the final pattern number? Answer with a single digit from 1 to 7 after ####.
+            side_task:
+              type: gl32
+              n_samples: 4000
+              seq_length: 40
+              reasoning_in_output: false
+            stages:
+              - side_task: {seq_length: 10, n_samples: 800}
+                n_eval: 20
+                n_final_eval: 100
+              - side_task: {seq_length: 20}
+              - side_task: {seq_length: 30}
+              - side_task: {seq_length: 40}
+
+      - - name: qwen
+
+      - - name: dotbydot
+          function_kwargs:
+            open_fraction: 0.5
+            state_supervision: false
+
+      - - name: seed1
+          function_kwargs:
+            seed: 1
+            side_task:
+              seed: 101
+        - name: seed2
+          function_kwargs:
+            seed: 2
+            side_task:
+              seed: 102
+        - name: seed3
+          function_kwargs:
+            seed: 3
+            side_task:
+              seed: 103
+        - name: seed4
+          function_kwargs:
+            seed: 4
+            side_task:
+              seed: 104
+
+common_patch:
+  - output_dir: results/comparison_method/RUN_NAME
+    function_kwargs:
+      log_path: results/comparison_method/RUN_NAME

@@ -1,0 +1,13 @@
+# Curriculum mode: every task x both models, climbing the task's own ladder from
+# tasks.yaml until a rung walls. Re-running is safe: finished runs are skipped.
+
+base: configs/tasks.yaml
+
+parallel: true
+max_concurrent: 4
+
+common_patch:
+  - name: curriculum
+    output_dir: results/curriculum/RUN_NAME
+    function_kwargs:
+      log_path: results/curriculum/RUN_NAME

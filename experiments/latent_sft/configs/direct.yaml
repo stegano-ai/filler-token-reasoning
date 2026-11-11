@@ -1,0 +1,16 @@
+# Direct mode: every task x both models, trained from scratch at the task's target
+# size only (`stages: [{}]` = one stage at the side_task target in tasks.yaml).
+# Re-running is safe: finished runs are skipped.
+
+base: configs/tasks.yaml
+
+parallel: true
+max_concurrent: 2
+
+common_patch:
+  - name: direct
+    output_dir: results/direct/RUN_NAME
+    function_kwargs:
+      log_path: results/direct/RUN_NAME
+      stages:
+        - {}

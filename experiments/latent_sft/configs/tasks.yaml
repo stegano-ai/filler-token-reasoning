@@ -1,0 +1,210 @@
+# The task x model axes shared by every mode meta. Not launched directly.
+#
+# Each task patch carries its prompt, its side_task at the TARGET size, and its own
+# ladder as `stages` (feasible minimum rung -> target). Ladders differ per task: the
+# first rung is the smallest size the generator and the disjoint eval split allow
+# (gl32 needs 2^L to fill a test split, so 8; horn's rejection sampling refuses
+# hops < 8; arith8mod and fc start at a single operation / hop), and rung spacing
+# follows where each task actually walls. Rungs with a small input space carry
+# right-sized n_eval/n_final_eval.
+#
+# Mode metas use these as: curriculum = run the ladder; direct/open = `stages: [{}]`,
+# one stage at the target already in side_task.
+#
+# Certified latent successes so far (>= 0.9 answer, qwen/oss20b): mod2 40/60,
+# a5 30/30, gl32 40/—, arith8mod 3/1, chain 8/8, fc 2/2, horn —/—.
+
+common_root: configs/base.yaml
+
+experiments:
+  - config_axes:
+      # ---------------- task axis ----------------
+      - - name: mod2
+          function_kwargs:
+            task_prompt: |
+              You will get a list of {N_VALUES} numbers, each 0 or 1. Is the count of 1s in the list even or odd?
+
+              For example, [1, 0, 1] contains two 1s, so the count is even and the answer is 0.
+
+              The list: {SIDE_INPUT}
+
+              Answer with a single digit after ####: 0 if the count of 1s is even, 1 if it is odd.
+            side_task:
+              type: rolling_mod_sum
+              n_samples: 4000
+              seq_length: 100
+              operand_range: 1
+              min_operand: 0
+              modulus: 2
+              reasoning_in_output: false
+            stages:
+              - side_task: {seq_length: 10, n_samples: 800}
+                n_eval: 20
+                n_final_eval: 100
+              - side_task: {seq_length: 20}
+              - side_task: {seq_length: 40}
+              - side_task: {seq_length: 60}
+              - side_task: {seq_length: 80}
+              - side_task: {seq_length: 100}
+
+        - name: a5
+          function_kwargs:
+            task_prompt: |
+              Five cups sit at positions 0-4; a ball starts under the cup at position 0. You will get a list of moves, each 0 or 1. Apply them in order. 0 = Rotate: every cup moves from position p to (p+1) mod 5. 1 = Double-Swap: the cups at positions 0 and 1 swap, and the cups at positions 3 and 4 swap.
+
+              For example, for moves [1, 0]: the Double-Swap moves the ball from position 0 to position 1, then the Rotate moves it from position 1 to position 2, so the answer is 2.
+
+              Moves: {SIDE_INPUT}
+
+              Where is the ball at the end? Answer with a single digit from 0 to {MAX_VALUE} after ####.
+            side_task:
+              type: ball_and_cups
+              n_samples: 4000
+              seq_length: 100
+              reasoning_in_output: false
+            stages:
+              - side_task: {seq_length: 10, n_samples: 800}
+                n_eval: 20
+                n_final_eval: 100
+              - side_task: {seq_length: 15}
+              - side_task: {seq_length: 20}
+              - side_task: {seq_length: 30}
+              - side_task: {seq_length: 40}
+              - side_task: {seq_length: 60}
+              - side_task: {seq_length: 100}
+
+        - name: gl32
+          function_kwargs:
+            task_prompt: |
+              Three lamps sit in a ring: lamp A, lamp B, lamp C. Only lamp A is on at the start. You will get a list of moves, each 0 or 1. Apply them in order. 0 = Shift: every lamp passes its on/off state to the next lamp (A's state moves to B, B's to C, C's to A). 1 = Couple: if lamp A is on, lamp B toggles; if lamp A is off, nothing happens.
+
+              Encode a lamp pattern as the number A + 2*B + 4*C, counting an on lamp as 1. For example, for moves [1, 0]: the Couple turns lamp B on (lamp A is on), then the Shift passes each state along the ring, leaving lamps B and C on, so the answer is 6.
+
+              Moves: {SIDE_INPUT}
+
+              What is the final pattern number? Answer with a single digit from 1 to 7 after ####.
+            side_task:
+              type: gl32
+              n_samples: 4000
+              seq_length: 100
+              reasoning_in_output: false
+            stages:
+              # No rung below 10: 2^8 = 256 inputs leaves a 192-item train set and a
+              # 12-item eval, too small to learn from — it walled gl32 on both models
+              # at a length the length-10 start clears.
+              - side_task: {seq_length: 10, n_samples: 800}
+                n_eval: 20
+                n_final_eval: 100
+              - side_task: {seq_length: 20}
+              - side_task: {seq_length: 30}
+              - side_task: {seq_length: 40}
+              - side_task: {seq_length: 60}
+              - side_task: {seq_length: 100}
+
+        - name: arith8mod
+          function_kwargs:
+            task_prompt: |
+              {SIDE_TASK_EXPLANATION}
+
+              Your input: {SIDE_INPUT}
+
+              Answer with a single digit from 0 to {MAX_VALUE} after ####: the final result.
+            side_task:
+              type: limited_arithmetic
+              max_value: 8
+              n_samples: 4000
+              num_steps: 100
+            stages:
+              - side_task: {num_steps: 1, n_samples: 120}
+                n_eval: 8
+                n_final_eval: 16
+              - side_task: {num_steps: 2, n_samples: 800}
+                n_eval: 20
+                n_final_eval: 100
+              - side_task: {num_steps: 3}
+              - side_task: {num_steps: 5}
+              - side_task: {num_steps: 10}
+              - side_task: {num_steps: 20}
+              - side_task: {num_steps: 40}
+              - side_task: {num_steps: 70}
+              - side_task: {num_steps: 100}
+
+        - name: chain
+          function_kwargs:
+            task_prompt: |
+              {SIDE_TASK_EXPLANATION}
+
+              {SIDE_INPUT}
+
+              Answer with a single digit after ####: 1 if the queried statement is true, 0 if it is false.
+            side_task:
+              type: prontoqa
+              strategy: chain
+              hops: 50
+              n_chains: 2
+              n_samples: 4000
+            stages:
+              - side_task: {hops: 4, n_samples: 800}
+                n_eval: 20
+                n_final_eval: 100
+              - side_task: {hops: 8}
+              - side_task: {hops: 16}
+              - side_task: {hops: 32}
+              - side_task: {hops: 50}
+
+        - name: horn
+          function_kwargs:
+            task_prompt: |
+              {SIDE_TASK_EXPLANATION}
+
+              {SIDE_INPUT}
+
+              Answer with a single digit after ####: 1 if the queried statement is true, 0 if it is false.
+            side_task:
+              type: prontoqa
+              strategy: horn
+              hops: 50
+              n_chains: 4
+              surface: compact
+              n_samples: 4000
+            stages:
+              - side_task: {hops: 8}
+              - side_task: {hops: 16}
+              - side_task: {hops: 24}
+              - side_task: {hops: 32}
+              - side_task: {hops: 50}
+
+        - name: fc
+          function_kwargs:
+            task_prompt: |
+              {SIDE_TASK_EXPLANATION}
+
+              {SIDE_INPUT}
+
+              Answer with a single digit after ####: the final value after applying all the tables.
+            side_task:
+              type: function_composition
+              n_hops: 25
+              domain_size: 8
+              n_samples: 4000
+              reasoning_in_output: false
+            stages:
+              - side_task: {n_hops: 1, n_samples: 400}
+                n_eval: 10
+                n_final_eval: 60
+              - side_task: {n_hops: 2, n_samples: 800}
+                n_eval: 20
+                n_final_eval: 100
+              - side_task: {n_hops: 4}
+              - side_task: {n_hops: 8}
+              - side_task: {n_hops: 16}
+              - side_task: {n_hops: 25}
+
+      # ---------------- model axis ----------------
+      - - name: qwen
+        - name: oss20b
+          function_kwargs:
+            model_name: "openai/gpt-oss-20b"
+            renderer_name: gpt_oss_no_sysprompt
+            sft:
+              learning_rate: 1.2e-4

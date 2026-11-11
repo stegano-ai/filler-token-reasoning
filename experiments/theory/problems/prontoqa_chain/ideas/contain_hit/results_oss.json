@@ -1,0 +1,242 @@
+{
+ "problem": "prontoqa_chain",
+ "circuit": "contain_hit",
+ "arch": "oss",
+ "arch_params": {
+  "p": 8,
+  "H": 64,
+  "F": 16,
+  "M": 4,
+  "C": 4,
+  "c_beta": 2.0,
+  "scratch_exp": 1.0,
+  "alpha_exp": 2.0,
+  "const_alphabet": 1024,
+  "mlp_bits": 32,
+  "max_depth": 200,
+  "layers": 24,
+  "pattern": [
+   "window",
+   "full"
+  ],
+  "window": 128,
+  "lin_keys": 128,
+  "conv": 3
+ },
+ "layers": {
+  "1": 6,
+  "2": 6,
+  "3": 8,
+  "4": 8,
+  "6": 8,
+  "8": 8,
+  "12": 10,
+  "16": 10,
+  "24": 10,
+  "32": 12,
+  "48": 12,
+  "64": 12,
+  "96": 14,
+  "128": 14,
+  "192": 14,
+  "256": 16,
+  "384": 16,
+  "512": 16
+ },
+ "claimed_layers": {
+  "1": 6,
+  "2": 6,
+  "3": 8,
+  "4": 8,
+  "6": 8,
+  "8": 8,
+  "12": 10,
+  "16": 10,
+  "24": 10,
+  "32": 12,
+  "48": 12,
+  "64": 12,
+  "96": 14,
+  "128": 14,
+  "192": 14,
+  "256": 16,
+  "384": 16,
+  "512": 16
+ },
+ "depth_ok": true,
+ "quick": [
+  {
+   "n": 1,
+   "depth": 6,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 2,
+   "depth": 6,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 3,
+   "depth": 8,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 4,
+   "depth": 8,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 6,
+   "depth": 8,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 8,
+   "depth": 8,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 12,
+   "depth": 10,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 16,
+   "depth": 10,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 24,
+   "depth": 10,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 32,
+   "depth": 12,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 48,
+   "depth": 12,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 64,
+   "depth": 12,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 96,
+   "depth": 14,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 128,
+   "depth": 14,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 192,
+   "depth": 14,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 256,
+   "depth": 16,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 384,
+   "depth": 16,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  },
+  {
+   "n": 512,
+   "depth": 16,
+   "tested": 5,
+   "failures": 0,
+   "first_failure": null
+  }
+ ],
+ "quick_ok": true,
+ "verified_n": [
+  1,
+  2,
+  3,
+  4,
+  6,
+  8,
+  12,
+  16,
+  24,
+  32,
+  48,
+  64,
+  96,
+  128,
+  192,
+  256,
+  384,
+  512
+ ],
+ "final": {
+  "seconds": 30.6,
+  "tested_per_n": {
+   "1": 8,
+   "2": 8,
+   "3": 8,
+   "4": 8,
+   "6": 8,
+   "8": 8,
+   "12": 8,
+   "16": 8,
+   "24": 8,
+   "32": 8,
+   "48": 8,
+   "64": 8,
+   "96": 8,
+   "128": 8,
+   "192": 8,
+   "256": 8,
+   "384": 8,
+   "512": 8
+  },
+  "n_failures": 0,
+  "failures": []
+ },
+ "pass": true
+}

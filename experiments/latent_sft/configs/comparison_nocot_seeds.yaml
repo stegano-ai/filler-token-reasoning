@@ -1,0 +1,108 @@
+# No-dots seeds for the method comparison: answer-only SFT with NO filler positions (`use_filler: false`,
+# the nocot arm), on the comparison's own ladders and targets (mod2 and gl32 at 40), seeds 1 and 2. The existing
+# seed-0 runs live in results/nocot/; these complete the arm to three seeds for parity (both models) and gl32 (qwen).
+# Expect every run to wall early (the seed-0 runs wall at 20 / 10), so each costs about one full failing rung.
+# Finished runs write `.complete` and are skipped on re-launch.
+
+common_root: configs/base.yaml
+
+parallel: true
+max_concurrent: 6
+
+experiments:
+  # mod2 @ 40 - both models (4 runs)
+  - config_axes:
+      - - name: mod2
+          function_kwargs:
+            task_prompt: |
+              You will get a list of {N_VALUES} numbers, each 0 or 1. Is the count of 1s in the list even or odd?
+
+              For example, [1, 0, 1] contains two 1s, so the count is even and the answer is 0.
+
+              The list: {SIDE_INPUT}
+
+              Answer with a single digit after ####: 0 if the count of 1s is even, 1 if it is odd.
+            side_task:
+              type: rolling_mod_sum
+              n_samples: 4000
+              seq_length: 40
+              operand_range: 1
+              min_operand: 0
+              modulus: 2
+              reasoning_in_output: false
+            stages:
+              - side_task: {seq_length: 10, n_samples: 800}
+                n_eval: 20
+                n_final_eval: 100
+              - side_task: {seq_length: 20}
+              - side_task: {seq_length: 40}
+
+      - - name: qwen
+        - name: oss20b
+          function_kwargs:
+            model_name: "openai/gpt-oss-20b"
+            renderer_name: gpt_oss_no_sysprompt
+            sft:
+              learning_rate: 1.2e-4
+
+      - - name: nocot
+          function_kwargs:
+            use_filler: false
+
+      - - name: seed1
+          function_kwargs:
+            seed: 1
+            side_task:
+              seed: 101
+        - name: seed2
+          function_kwargs:
+            seed: 2
+            side_task:
+              seed: 102
+
+  # gl32 @ 40 - qwen only (2 runs)
+  - config_axes:
+      - - name: gl32
+          function_kwargs:
+            task_prompt: |
+              Three lamps sit in a ring: lamp A, lamp B, lamp C. Only lamp A is on at the start. You will get a list of moves, each 0 or 1. Apply them in order. 0 = Shift: every lamp passes its on/off state to the next lamp (A's state moves to B, B's to C, C's to A). 1 = Couple: if lamp A is on, lamp B toggles; if lamp A is off, nothing happens.
+
+              Encode a lamp pattern as the number A + 2*B + 4*C, counting an on lamp as 1. For example, for moves [1, 0]: the Couple turns lamp B on (lamp A is on), then the Shift passes each state along the ring, leaving lamps B and C on, so the answer is 6.
+
+              Moves: {SIDE_INPUT}
+
+              What is the final pattern number? Answer with a single digit from 1 to 7 after ####.
+            side_task:
+              type: gl32
+              n_samples: 4000
+              seq_length: 40
+              reasoning_in_output: false
+            stages:
+              - side_task: {seq_length: 10, n_samples: 800}
+                n_eval: 20
+                n_final_eval: 100
+              - side_task: {seq_length: 20}
+              - side_task: {seq_length: 30}
+              - side_task: {seq_length: 40}
+
+      - - name: qwen
+
+      - - name: nocot
+          function_kwargs:
+            use_filler: false
+
+      - - name: seed1
+          function_kwargs:
+            seed: 1
+            side_task:
+              seed: 101
+        - name: seed2
+          function_kwargs:
+            seed: 2
+            side_task:
+              seed: 102
+
+common_patch:
+  - output_dir: results/comparison_method/RUN_NAME
+    function_kwargs:
+      log_path: results/comparison_method/RUN_NAME

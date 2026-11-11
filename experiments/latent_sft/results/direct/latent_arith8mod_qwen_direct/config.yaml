@@ -1,0 +1,47 @@
+function_args: []
+function_kwargs:
+  batch_size: 16
+  early_stop_metric: eval/output_correct
+  early_stop_min_steps: 50
+  early_stop_threshold: 0.9
+  log_path: results/direct/latent_arith8mod_qwen_direct
+  model_name: Qwen/Qwen3.6-35B-A3B
+  n_eval: 20
+  n_final_eval: 200
+  n_train: 2000
+  renderer_name: qwen3_5_disable_thinking
+  seed: 0
+  sft:
+    eval_every: 100
+    learning_rate: 0.00016
+    load_checkpoint_path: null
+    lora_rank: 32
+    lr_schedule: constant
+    num_epochs: 17
+    save_every: 100
+  side_task:
+    max_value: 8
+    n_samples: 4000
+    num_steps: 100
+    type: limited_arithmetic
+  stages:
+  - {}
+  task_prompt: '{SIDE_TASK_EXPLANATION}
+
+
+    Your input: {SIDE_INPUT}
+
+
+    Answer with a single digit from 0 to {MAX_VALUE} after ####: the final result.
+
+    '
+  wandb_name: latent_arith8mod_qwen_direct
+  wandb_project: steg-transfer-learning
+function_name: train_curriculum
+log_file_path: results/direct/latent_arith8mod_qwen_direct/logs.txt
+name: latent_arith8mod_qwen_direct
+save_config_path: results/direct/latent_arith8mod_qwen_direct/config.yaml
+wandb_entity: null
+wandb_group: null
+wandb_project: null
+wandb_tags: null

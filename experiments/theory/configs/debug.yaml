@@ -1,0 +1,13 @@
+common_root: configs/base.yaml
+
+experiments:
+  - config:
+      name: debug_serial
+      function_kwargs:
+        circuit: serial
+        max_n: 64
+  - config:
+      name: debug_prefix
+      function_kwargs:
+        circuit: prefix_doubling
+        max_n: 64

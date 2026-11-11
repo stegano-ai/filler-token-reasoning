@@ -1,0 +1,50 @@
+common_root: configs/base.yaml
+
+# count_scan is listed under bf16 only: its radix-512 counting layer needs full softmax attention at
+# layer 0, which qwen (linear) and oss (window, reach 128) do not have. block_scan replaces it there.
+experiments:
+  - config:
+      name: rms_serial_qwen
+      function_kwargs:
+        min_n: 2
+        problem: rolling_mod_sum
+        circuit: serial
+        arch: qwen
+  - config:
+      name: rms_serial_oss
+      function_kwargs:
+        min_n: 2
+        problem: rolling_mod_sum
+        circuit: serial
+        arch: oss
+  - config:
+      name: rms_count_scan_bf16
+      function_kwargs:
+        min_n: 2
+        problem: rolling_mod_sum
+        circuit: count_scan
+        arch: bf16
+  - config:
+      name: rms_block_scan_qwen
+      function_kwargs:
+        min_n: 2
+        problem: rolling_mod_sum
+        circuit: block_scan
+        arch: qwen
+        final_seconds: 30.0
+  - config:
+      name: rms_block_scan_oss
+      function_kwargs:
+        min_n: 2
+        problem: rolling_mod_sum
+        circuit: block_scan
+        arch: oss
+        final_seconds: 30.0
+  - config:
+      name: rms_block_scan_bf16
+      function_kwargs:
+        min_n: 2
+        problem: rolling_mod_sum
+        circuit: block_scan
+        arch: bf16
+        final_seconds: 30.0

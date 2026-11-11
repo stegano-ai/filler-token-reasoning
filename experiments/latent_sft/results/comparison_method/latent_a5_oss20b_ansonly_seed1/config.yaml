@@ -1,0 +1,68 @@
+function_args: []
+function_kwargs:
+  batch_size: 16
+  early_stop_metric: eval/output_correct
+  early_stop_min_steps: 50
+  early_stop_threshold: 0.9
+  log_path: results/comparison_method/latent_a5_oss20b_ansonly_seed1
+  model_name: openai/gpt-oss-20b
+  n_eval: 20
+  n_final_eval: 200
+  n_train: 2000
+  renderer_name: gpt_oss_no_sysprompt
+  seed: 1
+  sft:
+    eval_every: 100
+    learning_rate: 0.00012
+    load_checkpoint_path: null
+    lora_rank: 32
+    lr_schedule: constant
+    num_epochs: 17
+    save_every: 100
+  side_task:
+    n_samples: 4000
+    reasoning_in_output: false
+    seed: 101
+    seq_length: 30
+    type: ball_and_cups
+  stages:
+  - n_eval: 20
+    n_final_eval: 100
+    side_task:
+      n_samples: 800
+      seq_length: 10
+  - side_task:
+      seq_length: 15
+  - side_task:
+      seq_length: 20
+  - side_task:
+      seq_length: 30
+  state_supervision: false
+  task_prompt: 'Five cups sit at positions 0-4; a ball starts under the cup at position
+    0. You will get a list of moves, each 0 or 1. Apply them in order. 0 = Rotate:
+    every cup moves from position p to (p+1) mod 5. 1 = Double-Swap: the cups at positions
+    0 and 1 swap, and the cups at positions 3 and 4 swap.
+
+
+    For example, for moves [1, 0]: the Double-Swap moves the ball from position 0
+    to position 1, then the Rotate moves it from position 1 to position 2, so the
+    answer is 2.
+
+
+    Moves: {SIDE_INPUT}
+
+
+    Where is the ball at the end? Answer with a single digit from 0 to {MAX_VALUE}
+    after ####.
+
+    '
+  wandb_name: latent_a5_oss20b_ansonly_seed1
+  wandb_project: steg-transfer-learning
+function_name: train_curriculum
+log_file_path: results/comparison_method/latent_a5_oss20b_ansonly_seed1/logs.txt
+name: latent_a5_oss20b_ansonly_seed1
+save_config_path: results/comparison_method/latent_a5_oss20b_ansonly_seed1/config.yaml
+wandb_entity: null
+wandb_group: null
+wandb_project: null
+wandb_tags: null

@@ -1,0 +1,57 @@
+function_args: []
+function_kwargs:
+  batch_size: 16
+  early_stop_metric: eval_open/output_correct
+  early_stop_min_steps: 50
+  early_stop_threshold: 0.9
+  log_path: results/open/latent_mod2_oss20b_open
+  model_name: openai/gpt-oss-20b
+  n_eval: 20
+  n_final_eval: 200
+  n_train: 2000
+  open_fraction: 1.0
+  renderer_name: gpt_oss_no_sysprompt
+  seed: 0
+  sft:
+    eval_every: 100
+    learning_rate: 0.00012
+    load_checkpoint_path: null
+    lora_rank: 32
+    lr_schedule: constant
+    num_epochs: 17
+    save_every: 100
+  side_task:
+    min_operand: 0
+    modulus: 2
+    n_samples: 4000
+    operand_range: 1
+    reasoning_in_output: false
+    seq_length: 100
+    type: rolling_mod_sum
+  stages:
+  - {}
+  task_prompt: 'You will get a list of {N_VALUES} numbers, each 0 or 1. Is the count
+    of 1s in the list even or odd?
+
+
+    For example, [1, 0, 1] contains two 1s, so the count is even and the answer is
+    0.
+
+
+    The list: {SIDE_INPUT}
+
+
+    Answer with a single digit after ####: 0 if the count of 1s is even, 1 if it is
+    odd.
+
+    '
+  wandb_name: latent_mod2_oss20b_open
+  wandb_project: steg-transfer-learning
+function_name: train_curriculum
+log_file_path: results/open/latent_mod2_oss20b_open/logs.txt
+name: latent_mod2_oss20b_open
+save_config_path: results/open/latent_mod2_oss20b_open/config.yaml
+wandb_entity: null
+wandb_group: null
+wandb_project: null
+wandb_tags: null
